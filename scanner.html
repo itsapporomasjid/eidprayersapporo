@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<title>Eid Prayer Check-In</title>
+
+<script src="https://unpkg.com/html5-qrcode"></script>
+
+<style>
+
+body{
+font-family:Arial;
+text-align:center;
+padding:20px;
+}
+
+#reader{
+width:300px;
+margin:auto;
+}
+
+#result{
+margin-top:20px;
+font-size:22px;
+font-weight:bold;
+}
+
+.ok{color:green}
+.used{color:orange}
+.error{color:red}
+
+</style>
+
+</head>
+
+<body>
+
+<h2>Sapporo Masjid Eid Check-In</h2>
+
+<div id="reader"></div>
+
+<div id="result">Scan ticket QR</div>
+
+<script>
+
+const api="https://script.google.com/macros/s/AKfycbwZS74J5yDLPWm7R0L8lrUoeRi8CsM6aL1IxgdkXOPcjyRckv244WP8E4oh7_FzlD_OXg/exec"
+
+function onScanSuccess(qrText){
+
+fetch(api+"?qr="+encodeURIComponent(qrText))
+.then(r=>r.json())
+.then(data=>{
+
+let box=document.getElementById("result")
+
+if(data.status=="OK"){
+
+box.innerHTML=`✅ VALID<br>${data.name}<br>Batch ${data.batch}:00<br>Seats: ${data.seats}`
+box.className="ok"
+
+}
+
+else if(data.status=="USED"){
+
+box.innerHTML="⚠️ Ticket Already Used"
+box.className="used"
+
+}
+
+else{
+
+box.innerHTML="❌ Ticket Not Found"
+box.className="error"
+
+}
+
+})
+
+}
+
+let scanner=new Html5QrcodeScanner("reader",{fps:10,qrbox:250})
+scanner.render(onScanSuccess)
+
+</script>
+
+</body>
+</html>

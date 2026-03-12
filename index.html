@@ -47,6 +47,8 @@ font-weight:bold;
 
 </style>
 
+<script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+
 </head>
 
 <body>
@@ -68,7 +70,7 @@ font-weight:bold;
 </select>
 
 <label>Email</label>
-<input type="email" name="email" required>
+<input type="email" name="email">
 
 <label>Phone</label>
 <input name="phone">
@@ -80,12 +82,10 @@ font-weight:bold;
 <input type="number" name="girls_count" min="0" value="0">
 
 <label>Total Seats Reserved</label>
-<input type="text" id="totalSeats" value="1 seat (1 adult)" readonly>
+<input type="text" id="totalSeats" readonly>
 
 <label>Preferred Batch</label>
 <select name="batch"></select>
-
-<br><br>
 
 <br>
 
@@ -94,16 +94,13 @@ font-weight:bold;
 I will attend according to the schedule stated in the ticket
 </label>
 
-<br><br>
-
 <button type="submit" id="submitBtn">Register</button>
 
 </form>
 
 <script>
 
-const api="https://script.google.com/macros/s/AKfycbziq12nQyqKUQEtIWrsFn9XaP995UwnoGqnqCg41Brus4CIrm41IrP1I6rdTB_eEKgCAg/exec"
-
+const api="https://script.google.com/macros/s/AKfycbwZS74J5yDLPWm7R0L8lrUoeRi8CsM6aL1IxgdkXOPcjyRckv244WP8E4oh7_FzlD_OXg/exec"
 
 function updateTotalSeats(){
 
@@ -112,7 +109,7 @@ let girls=parseInt(document.querySelector("[name=girls_count]").value)||0
 
 let total=1+boys+girls
 
-document.getElementById("totalSeats").value =
+document.getElementById("totalSeats").value=
 `${total} seat(s) (1 adult + ${boys+girls} children)`
 
 }
@@ -171,7 +168,6 @@ document.getElementById("seatStatus").innerHTML=html
 }
 
 loadSeats()
-
 setInterval(loadSeats,5000)
 
 
@@ -200,9 +196,12 @@ body:new FormData(this)
 
 if(data.status=="OK"){
 
-document.body.innerHTML = `
+let name=document.querySelector('[name=name]').value
+let seats=1+boys+girls
 
-<div style="
+document.body.innerHTML=`
+
+<div id="ticket" style="
 max-width:420px;
 margin:auto;
 border:2px dashed #2c7a7b;
@@ -210,43 +209,35 @@ border-radius:10px;
 padding:25px;
 text-align:center;
 font-family:Arial;
+background:white;
 ">
 
-<h2 style="margin-bottom:5px;">Sapporo Masjid</h2>
-<h3 style="margin-top:0;">Eid Al-Fitr Prayer</h3>
+<h2>Sapporo Masjid</h2>
+<h3>Eid Al-Fitr Prayer</h3>
 
 <hr>
 
 <h2 style="color:#2c7a7b;">Batch ${data.batch}:00 a.m.</h2>
 
-<p style="margin-top:15px;font-size:16px;">
-<strong>${document.querySelector('[name=name]').value}</strong>
-</p>
+<p><strong>${name}</strong></p>
 
-<p style="font-size:14px;color:#555;">
-Seats Reserved: ${1 + 
-parseInt(document.querySelector('[name=boys_count]').value||0) + 
-parseInt(document.querySelector('[name=girls_count]').value||0)}
-</p>
+<p>Seats Reserved: ${seats}</p>
 
-<img
-src="https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(
+<img src="https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(
 `Sapporo Masjid Eid Prayer
-Name:${document.querySelector('[name=name]').value}
+Name:${name}
 Batch:${data.batch}:00
-Seats:${1 + 
-parseInt(document.querySelector('[name=boys_count]').value||0) + 
-parseInt(document.querySelector('[name=girls_count]').value||0)}
+Seats:${seats}
 Ticket:${data.qr}`
-)}"
-style="margin:20px 0;"
->
+)}">
 
-<p style="font-size:14px;color:#555;">
-Please show this ticket at the entrance.
-</p>
+<p>Please show this ticket at the entrance.</p>
 
 </div>
+
+<button onclick="downloadTicket()">Download Ticket</button>
+
+<button onclick="sendTicketEmail()">Send Ticket to Email (optional)</button>
 
 `
 
@@ -257,12 +248,38 @@ alert("Registration full")
 }
 
 })
+
 .catch(err=>{
 alert("Registration failed")
 console.error(err)
 })
 
 })
+
+
+
+function downloadTicket(){
+
+html2canvas(document.querySelector("#ticket")).then(canvas=>{
+
+let link=document.createElement("a")
+
+link.download="eid-ticket.png"
+link.href=canvas.toDataURL()
+
+link.click()
+
+})
+
+}
+
+
+
+function sendTicketEmail(){
+
+alert("Please download or screenshot the ticket. Email sending is limited.");
+
+}
 
 </script>
 

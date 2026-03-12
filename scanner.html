@@ -2,7 +2,9 @@
 <html>
 <head>
 
-<title>Eid Prayer Check-In</title>
+<title>Sapporo Masjid Eid Check-In</title>
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
 
 <script src="https://unpkg.com/html5-qrcode"></script>
 
@@ -10,24 +12,76 @@
 
 body{
 font-family:Arial;
+margin:0;
+padding:0;
+background:#f5f5f5;
 text-align:center;
-padding:20px;
 }
 
-#reader{
-width:300px;
-margin:auto;
-}
+/* Header */
 
-#result{
-margin-top:20px;
+header{
+background:#2c7a7b;
+color:white;
+padding:16px;
 font-size:22px;
 font-weight:bold;
 }
 
-.ok{color:green}
-.used{color:orange}
-.error{color:red}
+/* Scanner container */
+
+#scannerContainer{
+max-width:700px;
+margin:auto;
+padding:15px;
+}
+
+/* Camera area */
+
+#reader{
+width:100%;
+max-width:500px;
+margin:auto;
+border-radius:10px;
+overflow:hidden;
+}
+
+/* Result box */
+
+#result{
+
+margin-top:20px;
+font-size:26px;
+font-weight:bold;
+padding:15px;
+border-radius:10px;
+
+}
+
+/* Status colors */
+
+.ok{
+background:#e8f5e9;
+color:#2e7d32;
+}
+
+.used{
+background:#fff3e0;
+color:#ef6c00;
+}
+
+.error{
+background:#ffebee;
+color:#c62828;
+}
+
+/* Info text */
+
+.info{
+font-size:18px;
+margin-top:10px;
+color:#555;
+}
 
 </style>
 
@@ -35,19 +89,50 @@ font-weight:bold;
 
 <body>
 
-<h2>Sapporo Masjid Eid Check-In</h2>
+<header>
+Eid Prayer Check-In
+</header>
+
+<div id="scannerContainer">
 
 <div id="reader"></div>
 
-<div id="result">Scan ticket QR</div>
+<div id="result">
+Ready to scan ticket
+</div>
+
+<div class="info">
+Scan the QR code on the Eid ticket
+</div>
+
+</div>
 
 <script>
 
-const api="https://script.google.com/macros/s/AKfycbwZS74J5yDLPWm7R0L8lrUoeRi8CsM6aL1IxgdkXOPcjyRckv244WP8E4oh7_FzlD_OXg/exec"
+const api="https://script.google.com/macros/s/AKfycbyN6hUC2fmxk7s7GL9oL6NWpw_Hbnon5sQ8XiBuo1k54DvqSZu16pL3cw1StfyH2X33dA/exec"
+
 
 function onScanSuccess(qrText){
 
-fetch(api+"?qr="+encodeURIComponent(qrText))
+let ticket=null
+
+let lines=qrText.split("\n")
+
+for(let i=0;i<lines.length;i++){
+
+if(lines[i].startsWith("Ticket:")){
+ticket=lines[i].replace("Ticket:","").trim()
+}
+
+}
+
+if(!ticket){
+document.getElementById("result").innerHTML="Invalid QR"
+document.getElementById("result").className="error"
+return
+}
+
+fetch(api+"?qr="+encodeURIComponent(ticket))
 .then(r=>r.json())
 .then(data=>{
 
@@ -78,7 +163,18 @@ box.className="error"
 
 }
 
-let scanner=new Html5QrcodeScanner("reader",{fps:10,qrbox:250})
+
+/* Start camera scanner */
+
+let scanner=new Html5QrcodeScanner(
+"reader",
+{
+fps:10,
+qrbox:{width:280,height:280},
+aspectRatio:1
+}
+)
+
 scanner.render(onScanSuccess)
 
 </script>

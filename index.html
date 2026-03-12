@@ -19,47 +19,128 @@
 <style>
 
 body{
-font-family:Arial;
-max-width:600px;
-margin:auto;
+font-family:Arial, Helvetica, sans-serif;
+background:#F7F9F8;
+margin:0;
 padding:20px;
+color:#2C2C2C;
+}
+
+.container{
+max-width:650px;
+margin:auto;
+background:white;
+padding:30px;
+border-radius:12px;
+box-shadow:0 6px 20px rgba(0,0,0,0.08);
+}
+
+.header{
+text-align:center;
+margin-bottom:25px;
+}
+
+.logo{
+width:120px;
+margin-bottom:10px;
+}
+
+.header h1{
+margin:0;
+font-size:28px;
+color:#1F6F5C;
+}
+
+.header p{
+margin:5px 0 0 0;
+font-size:14px;
+color:#666;
 }
 
 label{
 display:block;
-margin-top:12px;
+margin-top:14px;
+font-weight:600;
 }
 
 input,select{
 width:100%;
-padding:10px;
-margin-top:4px;
+padding:12px;
+margin-top:6px;
+border-radius:6px;
+border:1px solid #ccc;
+font-size:14px;
 box-sizing:border-box;
 }
 
 button{
-background:#2c7a7b;
+background:#1F6F5C;
 color:white;
-padding:12px;
+padding:14px;
 border:none;
 width:100%;
 margin-top:20px;
+border-radius:6px;
+font-size:16px;
+font-weight:600;
 cursor:pointer;
 }
 
+button:hover{
+background:#175a4a;
+}
+
 #seatStatus{
-background:#f4f4f4;
-padding:10px;
+background:#f2f6f5;
+padding:15px;
+border-radius:8px;
 margin-bottom:20px;
+font-size:14px;
 }
 
 #totalSeats{
-background:#e9ecef;
+background:#f0f0f0;
 font-weight:bold;
 }
 
-</style>
+#ticket{
+max-width:420px;
+margin:auto;
+border:2px dashed #1F6F5C;
+border-radius:12px;
+padding:25px;
+text-align:center;
+background:white;
+}
 
+#ticket h2{
+color:#1F6F5C;
+}
+
+#result{
+margin-top:20px;
+font-size:22px;
+font-weight:bold;
+padding:15px;
+border-radius:8px;
+}
+
+.ok{
+background:#d4edda;
+color:#155724;
+}
+
+.used{
+background:#fff3cd;
+color:#856404;
+}
+
+.error{
+background:#f8d7da;
+color:#721c24;
+}
+
+</style>
 <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
 
 </head>

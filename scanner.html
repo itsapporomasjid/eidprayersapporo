@@ -23,20 +23,102 @@
 <style>
 
 body{
-font-family:Arial;
-text-align:center;
+font-family:Arial, Helvetica, sans-serif;
+background:#F7F9F8;
+margin:0;
 padding:20px;
-background:#f5f5f5;
+color:#2C2C2C;
 }
 
-h2{
+.container{
+max-width:650px;
+margin:auto;
+background:white;
+padding:30px;
+border-radius:12px;
+box-shadow:0 6px 20px rgba(0,0,0,0.08);
+}
+
+.header{
+text-align:center;
+margin-bottom:25px;
+}
+
+.logo{
+width:120px;
 margin-bottom:10px;
 }
 
-#reader{
+.header h1{
+margin:0;
+font-size:28px;
+color:#1F6F5C;
+}
+
+.header p{
+margin:5px 0 0 0;
+font-size:14px;
+color:#666;
+}
+
+label{
+display:block;
+margin-top:14px;
+font-weight:600;
+}
+
+input,select{
 width:100%;
-max-width:500px;
+padding:12px;
+margin-top:6px;
+border-radius:6px;
+border:1px solid #ccc;
+font-size:14px;
+box-sizing:border-box;
+}
+
+button{
+background:#1F6F5C;
+color:white;
+padding:14px;
+border:none;
+width:100%;
+margin-top:20px;
+border-radius:6px;
+font-size:16px;
+font-weight:600;
+cursor:pointer;
+}
+
+button:hover{
+background:#175a4a;
+}
+
+#seatStatus{
+background:#f2f6f5;
+padding:15px;
+border-radius:8px;
+margin-bottom:20px;
+font-size:14px;
+}
+
+#totalSeats{
+background:#f0f0f0;
+font-weight:bold;
+}
+
+#ticket{
+max-width:420px;
 margin:auto;
+border:2px dashed #1F6F5C;
+border-radius:12px;
+padding:25px;
+text-align:center;
+background:white;
+}
+
+#ticket h2{
+color:#1F6F5C;
 }
 
 #result{

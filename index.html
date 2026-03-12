@@ -2,19 +2,13 @@
 <html>
 <head>
 
-  <link rel="icon" type="image/png" href="images/his-logo.png">
-
-  <div class="header">
-
-<img src="images/his-logo.png" class="logo">
-
-<h1>Sapporo Masjid</h1>
-
-<p>Eid Al-Fitr Prayer Registration</p>
-
-</div>
-  
 <title>Sapporo Masjid Eid Al-Fitr Prayer Registration</title>
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<link rel="icon" type="image/png" href="images/his-logo.png">
+
+<script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
 
 <style>
 
@@ -117,38 +111,30 @@ background:white;
 color:#1F6F5C;
 }
 
-#result{
-margin-top:20px;
-font-size:22px;
-font-weight:bold;
-padding:15px;
-border-radius:8px;
-}
-
-.ok{
-background:#d4edda;
-color:#155724;
-}
-
-.used{
-background:#fff3cd;
-color:#856404;
-}
-
-.error{
-background:#f8d7da;
-color:#721c24;
+footer{
+margin-top:30px;
+text-align:center;
+font-size:12px;
+color:#888;
 }
 
 </style>
-<script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
 
 </head>
 
 <body>
+
 <div class="container">
-  
-<h2>Sapporo Masjid Eid Al-Fitr Prayer Registration</h2>
+
+<div class="header">
+
+<img src="images/his-logo.png" class="logo">
+
+<h1>Sapporo Masjid</h1>
+
+<p>Eid Al-Fitr Prayer Registration</p>
+
+</div>
 
 <h3>Seat Availability</h3>
 <div id="seatStatus">Loading...</div>
@@ -191,11 +177,15 @@ I will attend according to the schedule stated in the ticket
 
 </form>
 
+<footer>
+Organized by Hokkaido Islamic Society
+</footer>
+
+</div>
+
 <script>
 
-/* NEW APPS SCRIPT URL */
 const api="https://script.google.com/macros/s/AKfycbyN6hUC2fmxk7s7GL9oL6NWpw_Hbnon5sQ8XiBuo1k54DvqSZu16pL3cw1StfyH2X33dA/exec"
-
 
 
 function updateTotalSeats(){
@@ -214,7 +204,6 @@ document.querySelector("[name=boys_count]").addEventListener("input",updateTotal
 document.querySelector("[name=girls_count]").addEventListener("input",updateTotalSeats)
 
 updateTotalSeats()
-
 
 
 function loadSeats(){
@@ -306,33 +295,21 @@ Ticket:${data.qr}`
 
 document.body.innerHTML=`
 
-<div id="ticket" style="
-max-width:420px;
-margin:auto;
-border:2px dashed #2c7a7b;
-border-radius:10px;
-padding:25px;
-text-align:center;
-font-family:Arial;
-background:white;
-">
+<div id="ticket">
 
 <h2>Sapporo Masjid</h2>
 <h3>Eid Al-Fitr Prayer</h3>
 
 <hr>
 
-<h2 style="color:#2c7a7b;">Batch ${data.batch}:00 a.m.</h2>
+<h2>Batch ${data.batch}:00 a.m.</h2>
 
 <p><strong>${name}</strong></p>
 
 <p>Seats Reserved: ${seats}</p>
 
-<img
-crossorigin="anonymous"
-src="https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(qrData)}"
-style="margin:20px 0;"
->
+<img crossorigin="anonymous"
+src="https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(qrData)}">
 
 <p>Please show this ticket at the entrance.</p>
 
@@ -351,9 +328,9 @@ alert("Registration full")
 }
 
 })
-.catch(err=>{
+
+.catch(()=>{
 alert("Registration failed")
-console.error(err)
 })
 
 })
@@ -379,7 +356,6 @@ link.click()
 }
 
 
-
 function sendTicketEmail(){
 
 alert("Please download or screenshot the ticket. Email sending is limited.");
@@ -387,6 +363,6 @@ alert("Please download or screenshot the ticket. Email sending is limited.");
 }
 
 </script>
-</div>
+
 </body>
 </html>

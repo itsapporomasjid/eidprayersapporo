@@ -206,10 +206,35 @@ body:new FormData(this)
 if(data.status=="OK"){
 
 document.body.innerHTML=`
-<h2>Eid Prayer Ticket</h2>
-<h3>Your Batch: ${data.batch}:00</h3>
-<img src="https://chart.googleapis.com/chart?chs=250x250&cht=qr&chl=${data.qr}">
-<p>Please show this ticket at the entrance.</p>
+
+<div style="
+max-width:420px;
+margin:auto;
+border:2px dashed #2c7a7b;
+border-radius:10px;
+padding:25px;
+text-align:center;
+font-family:Arial;
+">
+
+<h2 style="margin-bottom:5px;">Sapporo Masjid</h2>
+<h3 style="margin-top:0;">Eid Al-Fitr Prayer</h3>
+
+<hr>
+
+<h2 style="color:#2c7a7b;">Batch ${data.batch}:00 a.m.</h2>
+
+<img 
+src="https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${data.qr}"
+style="margin:20px 0;"
+>
+
+<p style="font-size:14px;color:#555;">
+Please show this ticket at the entrance.
+</p>
+
+</div>
+
 `
 
 }else{

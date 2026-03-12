@@ -85,7 +85,7 @@ I will attend according to the schedule stated in the email
 
 <br><br>
 
-<button type="submit">Register</button>
+<button type="submit" id="submitBtn">Register</button>
 
 </form>
 
@@ -94,13 +94,13 @@ I will attend according to the schedule stated in the email
 document.getElementById("eidForm").addEventListener("submit", function(e){
 
 e.preventDefault();
-
+document.getElementById("submitBtn").disabled = true;
 fetch("https://script.google.com/macros/s/AKfycbwBIBMpbzwQe-lgDVL-ZkDaMU1hlDzN4yjrI1M3t-nwOvOBnEHQKmXbhfgiL6xvuvjMmQ/exec",{
 method:"POST",
 body:new FormData(this)
 })
-.then(res=>res.json())
-.then(data=>{
+.then(res => res.json())
+.then(data => {
 
 if(data.status=="OK"){
 
@@ -111,15 +111,19 @@ document.body.innerHTML = `
 <p>Please show this ticket at the entrance.</p>
 `;
 
-}
+}else{
 
-else{
 alert("Registration full");
+
 }
 
 })
+.catch(err => {
+alert("Registration failed. Please try again.");
+console.error(err);
+});
 
-})
+});
 
 </script>
 

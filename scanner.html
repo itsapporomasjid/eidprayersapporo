@@ -1,134 +1,25 @@
-<!DOCTYPE html>
-<html>
-<head>
-
-<title>Sapporo Masjid Eid Check-In</title>
-
-<meta name="viewport" content="width=device-width, initial-scale=1">
-
-<script src="https://unpkg.com/html5-qrcode"></script>
-
-<style>
-
-body{
-font-family:Arial;
-margin:0;
-padding:0;
-background:#f5f5f5;
-text-align:center;
-}
-
-/* Header */
-
-header{
-background:#2c7a7b;
-color:white;
-padding:16px;
-font-size:22px;
-font-weight:bold;
-}
-
-/* Scanner container */
-
-#scannerContainer{
-max-width:700px;
-margin:auto;
-padding:15px;
-}
-
-/* Camera area */
-
-#reader{
-width:100%;
-max-width:500px;
-margin:auto;
-border-radius:10px;
-overflow:hidden;
-}
-
-/* Result box */
-
-#result{
-
-margin-top:20px;
-font-size:26px;
-font-weight:bold;
-padding:15px;
-border-radius:10px;
-
-}
-
-/* Status colors */
-
-.ok{
-background:#e8f5e9;
-color:#2e7d32;
-}
-
-.used{
-background:#fff3e0;
-color:#ef6c00;
-}
-
-.error{
-background:#ffebee;
-color:#c62828;
-}
-
-/* Info text */
-
-.info{
-font-size:18px;
-margin-top:10px;
-color:#555;
-}
-
-</style>
-
-</head>
-
-<body>
-
-<header>
-Eid Prayer Check-In
-</header>
-
-<div id="scannerContainer">
-
-<div id="reader"></div>
-
-<div id="result">
-Ready to scan ticket
-</div>
-
-<div class="info">
-Scan the QR code on the Eid ticket
-</div>
-
-</div>
-
 <script>
 
 const api="https://script.google.com/macros/s/AKfycbyN6hUC2fmxk7s7GL9oL6NWpw_Hbnon5sQ8XiBuo1k54DvqSZu16pL3cw1StfyH2X33dA/exec"
 
+let scanner
 
 function onScanSuccess(qrText){
 
-let ticket=null
+scanner.pause(true)   // STOP scanning immediately
 
+let ticket=null
 let lines=qrText.split("\n")
 
 for(let i=0;i<lines.length;i++){
-
 if(lines[i].startsWith("Ticket:")){
 ticket=lines[i].replace("Ticket:","").trim()
 }
-
 }
 
 if(!ticket){
-document.getElementById("result").innerHTML="Invalid QR"
-document.getElementById("result").className="error"
+showResult("Invalid QR","error")
+resumeScanner()
 return
 }
 
@@ -136,37 +27,50 @@ fetch(api+"?qr="+encodeURIComponent(ticket))
 .then(r=>r.json())
 .then(data=>{
 
-let box=document.getElementById("result")
-
 if(data.status=="OK"){
-
-box.innerHTML=`✅ VALID<br>${data.name}<br>Batch ${data.batch}:00<br>Seats: ${data.seats}`
-box.className="ok"
-
+showResult(`✅ VALID<br>${data.name}<br>Batch ${data.batch}:00<br>Seats: ${data.seats}`,"ok")
 }
 
 else if(data.status=="USED"){
-
-box.innerHTML="⚠️ Ticket Already Used"
-box.className="used"
-
+showResult("⚠️ Ticket Already Used","used")
 }
 
 else{
-
-box.innerHTML="❌ Ticket Not Found"
-box.className="error"
-
+showResult("❌ Ticket Not Found","error")
 }
+
+resumeScanner()
 
 })
 
 }
 
 
-/* Start camera scanner */
 
-let scanner=new Html5QrcodeScanner(
+function showResult(message,type){
+
+let box=document.getElementById("result")
+
+box.innerHTML=message
+box.className=type
+
+}
+
+
+
+function resumeScanner(){
+
+setTimeout(()=>{
+scanner.resume()
+document.getElementById("result").innerHTML="Ready to scan ticket"
+document.getElementById("result").className=""
+},3000)
+
+}
+
+
+
+scanner=new Html5QrcodeScanner(
 "reader",
 {
 fps:10,
@@ -178,6 +82,3 @@ aspectRatio:1
 scanner.render(onScanSuccess)
 
 </script>
-
-</body>
-</html>

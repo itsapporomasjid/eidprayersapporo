@@ -68,16 +68,15 @@ margin-bottom:20px;
 <label>Phone</label>
 <input name="phone">
 
-<label>Number of Children</label>
-<input type="number" name="children_count" min="0" value="0">
+<label>Number of Boys</label>
+<input type="number" name="boys_count" min="0" value="0">
 
-<label>Children Gender</label>
-<select name="children_gender">
-<option value="">None</option>
-<option value="Male">Male</option>
-<option value="Female">Female</option>
-</select>
-
+<label>Number of Girls</label>
+<input type="number" name="girls_count" min="0" value="0">
+  
+<label>Total Seats Reserved</label>
+<input type="text" id="totalSeats" value="1" readonly>
+  
 <label>Preferred Batch</label>
 <select name="batch"></select>
 
@@ -105,7 +104,17 @@ I will attend according to the schedule stated in the email
 
 const api="https://script.google.com/macros/s/AKfycbwaq-wvM3_KiO5AjvPROaTMh9OMy7ZckWvEduR9evtJ7w9e4BRzfhXuZ4XJc4ETR7Frxg/exec"
 
+function updateTotalSeats(){
 
+let boys = parseInt(document.querySelector("[name=boys_count]").value) || 0
+let girls = parseInt(document.querySelector("[name=girls_count]").value) || 0
+
+let total = 1 + boys + girls
+
+document.getElementById("totalSeats").value =
+`${total} seat(s) (1 adult + ${boys+girls} children)`
+}
+  
 function loadSeats(){
 
 fetch(api)
@@ -163,14 +172,15 @@ document.getElementById("eidForm").addEventListener("submit", function(e){
 
 e.preventDefault()
 
-let childCount = parseInt(document.querySelector("[name=children_count]").value)
-let childGender = document.querySelector("[name=children_gender]").value
+let boys = parseInt(document.querySelector("[name=boys_count]").value)
+let girls = parseInt(document.querySelector("[name=girls_count]").value)
 
-if(childCount > 0 && childGender==""){
-alert("Please select children gender")
+if(boys < 0 || girls < 0){
+alert("Children numbers cannot be negative")
 return
 }
-
+<label>Total Seats Reserved</label>
+<input type="text" id="totalSeats" value="1" readonly>
 document.getElementById("submitBtn").disabled=true
 document.getElementById("submitBtn").innerText="Processing..."
 

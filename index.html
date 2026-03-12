@@ -127,7 +127,7 @@ let isFull = (m<=0 && f<=0)
 html += `
 <div>
 <b>${b}:00</b>
-Male: ${m}/300 | Female: ${f}/100 ${isFull ? "<b>FULL</b>" : ""}
+Male left: ${m}/300 | Female left: ${f}/100 ${isFull ? "<b>FULL</b>" : ""}
 </div>
 `
 
@@ -154,8 +154,8 @@ document.getElementById("seatStatus").innerHTML=html
 
 loadSeats()
 
-// refresh every 30 seconds
-setInterval(loadSeats,30000)
+// refresh every 5 seconds
+setInterval(loadSeats,5000)
 
 
 

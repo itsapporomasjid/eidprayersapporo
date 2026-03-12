@@ -87,8 +87,6 @@ font-weight:bold;
 <label>Preferred Batch</label>
 <select name="batch"></select>
 
-<br>
-
 <label>
 <input type="checkbox" required>
 I will attend according to the schedule stated in the ticket
@@ -102,6 +100,7 @@ I will attend according to the schedule stated in the ticket
 
 const api="https://script.google.com/macros/s/AKfycbwZS74J5yDLPWm7R0L8lrUoeRi8CsM6aL1IxgdkXOPcjyRckv244WP8E4oh7_FzlD_OXg/exec"
 
+
 function updateTotalSeats(){
 
 let boys=parseInt(document.querySelector("[name=boys_count]").value)||0
@@ -109,7 +108,7 @@ let girls=parseInt(document.querySelector("[name=girls_count]").value)||0
 
 let total=1+boys+girls
 
-document.getElementById("totalSeats").value=
+document.getElementById("totalSeats").value =
 `${total} seat(s) (1 adult + ${boys+girls} children)`
 
 }
@@ -199,7 +198,13 @@ if(data.status=="OK"){
 let name=document.querySelector('[name=name]').value
 let seats=1+boys+girls
 
-document.body.innerHTML=`
+let qrData = `Sapporo Masjid Eid Prayer
+Name:${name}
+Batch:${data.batch}:00
+Seats:${seats}
+Ticket:${data.qr}`
+
+document.body.innerHTML = `
 
 <div id="ticket" style="
 max-width:420px;
@@ -223,13 +228,11 @@ background:white;
 
 <p>Seats Reserved: ${seats}</p>
 
-<img src="https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(
-`Sapporo Masjid Eid Prayer
-Name:${name}
-Batch:${data.batch}:00
-Seats:${seats}
-Ticket:${data.qr}`
-)}">
+<img
+crossorigin="anonymous"
+src="https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(qrData)}"
+style="margin:20px 0;"
+>
 
 <p>Please show this ticket at the entrance.</p>
 
@@ -260,12 +263,15 @@ console.error(err)
 
 function downloadTicket(){
 
-html2canvas(document.querySelector("#ticket")).then(canvas=>{
+html2canvas(document.querySelector("#ticket"),{
+useCORS:true,
+scale:3
+}).then(canvas=>{
 
 let link=document.createElement("a")
 
 link.download="eid-ticket.png"
-link.href=canvas.toDataURL()
+link.href=canvas.toDataURL("image/png")
 
 link.click()
 

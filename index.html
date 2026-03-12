@@ -98,7 +98,9 @@ I will attend according to the schedule stated in the ticket
 
 <script>
 
-const api="https://script.google.com/macros/s/AKfycbwZS74J5yDLPWm7R0L8lrUoeRi8CsM6aL1IxgdkXOPcjyRckv244WP8E4oh7_FzlD_OXg/exec"
+/* NEW APPS SCRIPT URL */
+const api="https://script.google.com/macros/s/AKfycbyN6hUC2fmxk7s7GL9oL6NWpw_Hbnon5sQ8XiBuo1k54DvqSZu16pL3cw1StfyH2X33dA/exec"
+
 
 
 function updateTotalSeats(){
@@ -108,7 +110,7 @@ let girls=parseInt(document.querySelector("[name=girls_count]").value)||0
 
 let total=1+boys+girls
 
-document.getElementById("totalSeats").value =
+document.getElementById("totalSeats").value=
 `${total} seat(s) (1 adult + ${boys+girls} children)`
 
 }
@@ -163,6 +165,9 @@ dropdown.appendChild(option)
 document.getElementById("seatStatus").innerHTML=html
 
 })
+.catch(()=>{
+document.getElementById("seatStatus").innerHTML="Unable to load seat availability."
+})
 
 }
 
@@ -198,13 +203,13 @@ if(data.status=="OK"){
 let name=document.querySelector('[name=name]').value
 let seats=1+boys+girls
 
-let qrData = `Sapporo Masjid Eid Prayer
+let qrData=`Sapporo Masjid Eid Prayer
 Name:${name}
 Batch:${data.batch}:00
 Seats:${seats}
 Ticket:${data.qr}`
 
-document.body.innerHTML = `
+document.body.innerHTML=`
 
 <div id="ticket" style="
 max-width:420px;
@@ -251,7 +256,6 @@ alert("Registration full")
 }
 
 })
-
 .catch(err=>{
 alert("Registration failed")
 console.error(err)

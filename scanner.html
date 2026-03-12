@@ -1,22 +1,13 @@
 <!DOCTYPE html>
 <html>
+
 <head>
 
-  <link rel="icon" type="image/png" href="images/his-logo.png">
-
-  <div class="header">
-
-<img src="images/his-logo.png" class="logo">
-
-<h1>Sapporo Masjid</h1>
-
-<p>Eid Al-Fitr Prayer Registration</p>
-
-</div>
-  
-<title>Eid Ticket Scanner</title>
+<title>Sapporo Masjid Eid Ticket Scanner</title>
 
 <meta name="viewport" content="width=device-width, initial-scale=1">
+
+<link rel="icon" type="image/png" href="images/his-logo.png">
 
 <script src="https://unpkg.com/html5-qrcode"></script>
 
@@ -31,16 +22,16 @@ color:#2C2C2C;
 }
 
 .container{
-max-width:650px;
+max-width:700px;
 margin:auto;
 background:white;
 padding:30px;
 border-radius:12px;
 box-shadow:0 6px 20px rgba(0,0,0,0.08);
+text-align:center;
 }
 
 .header{
-text-align:center;
 margin-bottom:25px;
 }
 
@@ -61,64 +52,10 @@ font-size:14px;
 color:#666;
 }
 
-label{
-display:block;
-margin-top:14px;
-font-weight:600;
-}
-
-input,select{
+#reader{
 width:100%;
-padding:12px;
-margin-top:6px;
-border-radius:6px;
-border:1px solid #ccc;
-font-size:14px;
-box-sizing:border-box;
-}
-
-button{
-background:#1F6F5C;
-color:white;
-padding:14px;
-border:none;
-width:100%;
-margin-top:20px;
-border-radius:6px;
-font-size:16px;
-font-weight:600;
-cursor:pointer;
-}
-
-button:hover{
-background:#175a4a;
-}
-
-#seatStatus{
-background:#f2f6f5;
-padding:15px;
-border-radius:8px;
-margin-bottom:20px;
-font-size:14px;
-}
-
-#totalSeats{
-background:#f0f0f0;
-font-weight:bold;
-}
-
-#ticket{
 max-width:420px;
 margin:auto;
-border:2px dashed #1F6F5C;
-border-radius:12px;
-padding:25px;
-text-align:center;
-background:white;
-}
-
-#ticket h2{
-color:#1F6F5C;
 }
 
 #result{
@@ -144,17 +81,39 @@ background:#f8d7da;
 color:#721c24;
 }
 
+footer{
+margin-top:25px;
+font-size:12px;
+color:#888;
+}
+
 </style>
 
 </head>
 
 <body>
+
 <div class="container">
-<h2>Eid Prayer Ticket Scanner</h2>
+
+<div class="header">
+
+<img src="images/his-logo.png" class="logo">
+
+<h1>Eid Ticket Scanner</h1>
+
+<p>Sapporo Masjid</p>
+
+</div>
 
 <div id="reader"></div>
 
 <div id="result">Ready to scan ticket</div>
+
+<footer>
+Hokkaido Islamic Society
+</footer>
+
+</div>
 
 <script>
 
@@ -176,7 +135,7 @@ ticket=lines[i].replace("Ticket:","").trim()
 }
 
 if(!ticket){
-showResult("Invalid QR","error")
+showResult("❌ Invalid QR Code","error")
 resumeScanner()
 return
 }
@@ -215,9 +174,12 @@ box.className=type
 function resumeScanner(){
 
 setTimeout(()=>{
+
 scanner.resume()
+
 document.getElementById("result").innerHTML="Ready to scan ticket"
 document.getElementById("result").className=""
+
 },3000)
 
 }
@@ -237,6 +199,7 @@ scanner.render(onScanSuccess)
 }
 
 </script>
-</div>
+
 </body>
+
 </html>

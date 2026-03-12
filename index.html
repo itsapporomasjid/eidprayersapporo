@@ -72,13 +72,7 @@ margin-bottom:20px;
 </select>
 
 <label>Preferred Batch</label>
-<select name="batch">
-<option value="6">6:00</option>
-<option value="7">7:00</option>
-<option value="8">8:00</option>
-<option value="9">9:00</option>
-<option value="10">10:00</option>
-</select>
+<select name="batch"></select>
 
 <br><br>
 
@@ -103,6 +97,7 @@ I will attend according to the schedule stated in the email
 <script>
 
 const api="https://script.google.com/macros/s/AKfycbwX-SjANEnc50t0yaxZas0RDoJ5HV7F0LOcSCl5J54m3QYdseqR8FFiN0DL651iJOrRyA/exec"
+
 
 function loadSeats(){
 
@@ -151,6 +146,48 @@ document.getElementById("seatStatus").innerHTML=html
 }
 
 loadSeats()
+
+// refresh every 30 seconds
+setInterval(loadSeats,30000)
+
+
+
+document.getElementById("eidForm").addEventListener("submit", function(e){
+
+e.preventDefault()
+
+document.getElementById("submitBtn").disabled=true
+document.getElementById("submitBtn").innerText="Processing..."
+
+fetch(api,{
+method:"POST",
+body:new FormData(this)
+})
+.then(res=>res.json())
+.then(data=>{
+
+if(data.status=="OK"){
+
+document.body.innerHTML=`
+<h2>Eid Prayer Ticket</h2>
+<h3>Your Batch: ${data.batch}:00</h3>
+<img src="https://chart.googleapis.com/chart?chs=250x250&cht=qr&chl=${data.qr}">
+<p>Please show this ticket at the entrance.</p>
+`
+
+}else{
+
+alert("Registration full")
+
+}
+
+})
+.catch(err=>{
+alert("Registration failed")
+console.error(err)
+})
+
+})
 
 </script>
 

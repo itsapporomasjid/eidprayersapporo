@@ -111,68 +111,46 @@ fetch(api)
 .then(data=>{
 
 let html=""
+let dropdown=document.querySelector("select[name=batch]")
+
+dropdown.innerHTML=""
 
 for(let b=6;b<=10;b++){
 
 let m=data[b].maleLeft
 let f=data[b].femaleLeft
 
-let full = (m<=0 && f<=0) ? "FULL" : ""
+let isFull = (m<=0 && f<=0)
 
 html += `
 <div>
 <b>${b}:00</b>
-Male: ${m}/300 | Female: ${f}/100 ${full}
+Male: ${m}/300 | Female: ${f}/100 ${isFull ? "<b>FULL</b>" : ""}
 </div>
 `
 
+let option=document.createElement("option")
+
+option.value=b
+
+if(isFull){
+option.text=`${b}:00 (FULL)`
+option.disabled=true
+}else{
+option.text=`${b}:00 (M:${m} F:${f})`
 }
 
-document.getElementById("seatStatus").innerHTML = html
+dropdown.appendChild(option)
+
+}
+
+document.getElementById("seatStatus").innerHTML=html
 
 })
 
 }
 
 loadSeats()
-
-
-document.getElementById("eidForm").addEventListener("submit", function(e){
-
-e.preventDefault();
-
-document.getElementById("submitBtn").disabled = true;
-document.getElementById("submitBtn").innerText = "Processing...";
-
-fetch(api,{
-method:"POST",
-body:new FormData(this)
-})
-.then(res=>res.json())
-.then(data=>{
-
-if(data.status=="OK"){
-
-document.body.innerHTML = `
-<h2>Eid Prayer Ticket</h2>
-<h3>Your Batch: ${data.batch}:00</h3>
-<img src="https://chart.googleapis.com/chart?chs=250x250&cht=qr&chl=${data.qr}">
-<p>Please show this ticket at the entrance.</p>
-`
-
-}else{
-
-alert("Registration full")
-
-}
-
-})
-.catch(err=>{
-alert("Registration failed. Please try again.")
-console.error(err)
-})
-
-})
 
 </script>
 

@@ -6,7 +6,7 @@ let scanner
 
 function onScanSuccess(qrText){
 
-scanner.pause(true)   // STOP scanning immediately
+scanner.pause(true)
 
 let ticket=null
 let lines=qrText.split("\n")
@@ -42,6 +42,10 @@ showResult("❌ Ticket Not Found","error")
 resumeScanner()
 
 })
+.catch(()=>{
+showResult("Connection error","error")
+resumeScanner()
+})
 
 }
 
@@ -61,14 +65,21 @@ box.className=type
 function resumeScanner(){
 
 setTimeout(()=>{
+
 scanner.resume()
+
 document.getElementById("result").innerHTML="Ready to scan ticket"
 document.getElementById("result").className=""
+
 },3000)
 
 }
 
 
+
+/* START SCANNER AFTER PAGE LOAD */
+
+window.onload=function(){
 
 scanner=new Html5QrcodeScanner(
 "reader",
@@ -80,5 +91,7 @@ aspectRatio:1
 )
 
 scanner.render(onScanSuccess)
+
+}
 
 </script>

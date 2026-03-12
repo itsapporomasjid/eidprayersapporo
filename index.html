@@ -163,6 +163,14 @@ document.getElementById("eidForm").addEventListener("submit", function(e){
 
 e.preventDefault()
 
+let childCount = parseInt(document.querySelector("[name=children_count]").value)
+let childGender = document.querySelector("[name=children_gender]").value
+
+if(childCount > 0 && childGender==""){
+alert("Please select children gender")
+return
+}
+
 document.getElementById("submitBtn").disabled=true
 document.getElementById("submitBtn").innerText="Processing..."
 

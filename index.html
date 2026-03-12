@@ -99,9 +99,24 @@ fetch("https://script.google.com/macros/s/AKfycbwBIBMpbzwQe-lgDVL-ZkDaMU1hlDzN4y
 method:"POST",
 body:new FormData(this)
 })
-.then(res=>res.text())
+.then(res=>res.json())
 .then(data=>{
-alert(data)
+
+if(data.status=="OK"){
+
+document.body.innerHTML = `
+<h2>Eid Prayer Ticket</h2>
+<h3>Your Batch: ${data.batch}:00</h3>
+<img src="https://chart.googleapis.com/chart?chs=250x250&cht=qr&chl=${data.qr}">
+<p>Please show this ticket at the entrance.</p>
+`;
+
+}
+
+else{
+alert("Registration full");
+}
+
 })
 
 })

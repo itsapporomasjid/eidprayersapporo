@@ -95,6 +95,7 @@ document.getElementById("eidForm").addEventListener("submit", function(e){
 
 e.preventDefault();
 document.getElementById("submitBtn").disabled = true;
+document.getElementById("submitBtn").innerText = "Processing...";
 fetch("https://script.google.com/macros/s/AKfycbwBIBMpbzwQe-lgDVL-ZkDaMU1hlDzN4yjrI1M3t-nwOvOBnEHQKmXbhfgiL6xvuvjMmQ/exec",{
 method:"POST",
 body:new FormData(this)

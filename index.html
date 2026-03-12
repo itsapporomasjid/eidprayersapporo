@@ -40,6 +40,11 @@ padding:10px;
 margin-bottom:20px;
 }
 
+#totalSeats{
+background:#e9ecef;
+font-weight:bold;
+}
+
 </style>
 
 </head>
@@ -73,10 +78,10 @@ margin-bottom:20px;
 
 <label>Number of Girls</label>
 <input type="number" name="girls_count" min="0" value="0">
-  
+
 <label>Total Seats Reserved</label>
-<input type="text" id="totalSeats" value="1" readonly>
-  
+<input type="text" id="totalSeats" value="1 seat (1 adult)" readonly>
+
 <label>Preferred Batch</label>
 <select name="batch"></select>
 
@@ -104,17 +109,26 @@ I will attend according to the schedule stated in the email
 
 const api="https://script.google.com/macros/s/AKfycbwaq-wvM3_KiO5AjvPROaTMh9OMy7ZckWvEduR9evtJ7w9e4BRzfhXuZ4XJc4ETR7Frxg/exec"
 
+
 function updateTotalSeats(){
 
-let boys = parseInt(document.querySelector("[name=boys_count]").value) || 0
-let girls = parseInt(document.querySelector("[name=girls_count]").value) || 0
+let boys=parseInt(document.querySelector("[name=boys_count]").value)||0
+let girls=parseInt(document.querySelector("[name=girls_count]").value)||0
 
-let total = 1 + boys + girls
+let total=1+boys+girls
 
 document.getElementById("totalSeats").value =
 `${total} seat(s) (1 adult + ${boys+girls} children)`
+
 }
-  
+
+document.querySelector("[name=boys_count]").addEventListener("input",updateTotalSeats)
+document.querySelector("[name=girls_count]").addEventListener("input",updateTotalSeats)
+
+updateTotalSeats()
+
+
+
 function loadSeats(){
 
 fetch(api)
@@ -131,12 +145,12 @@ for(let b=6;b<=10;b++){
 let m=data[b].maleLeft
 let f=data[b].femaleLeft
 
-let isFull = (m<=0 && f<=0)
+let isFull=(m<=0 && f<=0)
 
-html += `
+html+=`
 <div>
 <b>${b}:00</b>
-Male left: ${m}/300 | Female left: ${f}/100 ${isFull ? "<b>FULL</b>" : ""}
+Male left: ${m}/300 | Female left: ${f}/100 ${isFull?"<b>FULL</b>":""}
 </div>
 `
 
@@ -163,24 +177,22 @@ document.getElementById("seatStatus").innerHTML=html
 
 loadSeats()
 
-// refresh every 5 seconds
 setInterval(loadSeats,5000)
 
 
 
-document.getElementById("eidForm").addEventListener("submit", function(e){
+document.getElementById("eidForm").addEventListener("submit",function(e){
 
 e.preventDefault()
 
-let boys = parseInt(document.querySelector("[name=boys_count]").value)
-let girls = parseInt(document.querySelector("[name=girls_count]").value)
+let boys=parseInt(document.querySelector("[name=boys_count]").value)||0
+let girls=parseInt(document.querySelector("[name=girls_count]").value)||0
 
-if(boys < 0 || girls < 0){
+if(boys<0 || girls<0){
 alert("Children numbers cannot be negative")
 return
 }
-<label>Total Seats Reserved</label>
-<input type="text" id="totalSeats" value="1" readonly>
+
 document.getElementById("submitBtn").disabled=true
 document.getElementById("submitBtn").innerText="Processing..."
 

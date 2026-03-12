@@ -2,6 +2,7 @@
 <html>
 <head>
 <title>Eid Prayer Registration</title>
+
 <style>
 
 body{
@@ -23,12 +24,22 @@ padding:12px;
 border:none;
 }
 
+#seatStatus{
+background:#f4f4f4;
+padding:10px;
+margin-bottom:20px;
+}
+
 </style>
+
 </head>
 
 <body>
 
 <h2>Eid Al-Fitr Prayer Registration</h2>
+
+<h3>Seat Availability</h3>
+<div id="seatStatus">Loading...</div>
 
 <form id="eidForm">
 
@@ -91,17 +102,54 @@ I will attend according to the schedule stated in the email
 
 <script>
 
+const api="https://script.google.com/macros/s/AKfycbwX-SjANEnc50t0yaxZas0RDoJ5HV7F0LOcSCl5J54m3QYdseqR8FFiN0DL651iJOrRyA/exec"
+
+function loadSeats(){
+
+fetch(api)
+.then(res=>res.json())
+.then(data=>{
+
+let html=""
+
+for(let b=6;b<=10;b++){
+
+let m=data[b].maleLeft
+let f=data[b].femaleLeft
+
+let full = (m<=0 && f<=0) ? "FULL" : ""
+
+html += `
+<div>
+<b>${b}:00</b>
+Male: ${m}/300 | Female: ${f}/100 ${full}
+</div>
+`
+
+}
+
+document.getElementById("seatStatus").innerHTML = html
+
+})
+
+}
+
+loadSeats()
+
+
 document.getElementById("eidForm").addEventListener("submit", function(e){
 
 e.preventDefault();
+
 document.getElementById("submitBtn").disabled = true;
 document.getElementById("submitBtn").innerText = "Processing...";
-fetch("https://script.google.com/macros/s/AKfycbwBIBMpbzwQe-lgDVL-ZkDaMU1hlDzN4yjrI1M3t-nwOvOBnEHQKmXbhfgiL6xvuvjMmQ/exec",{
+
+fetch(api,{
 method:"POST",
 body:new FormData(this)
 })
-.then(res => res.json())
-.then(data => {
+.then(res=>res.json())
+.then(data=>{
 
 if(data.status=="OK"){
 
@@ -110,21 +158,21 @@ document.body.innerHTML = `
 <h3>Your Batch: ${data.batch}:00</h3>
 <img src="https://chart.googleapis.com/chart?chs=250x250&cht=qr&chl=${data.qr}">
 <p>Please show this ticket at the entrance.</p>
-`;
+`
 
 }else{
 
-alert("Registration full");
+alert("Registration full")
 
 }
 
 })
-.catch(err => {
-alert("Registration failed. Please try again.");
-console.error(err);
-});
+.catch(err=>{
+alert("Registration failed. Please try again.")
+console.error(err)
+})
 
-});
+})
 
 </script>
 

@@ -92,6 +92,25 @@ margin-bottom:20px;
 font-size:14px;
 }
 
+.progressBar{
+width:100%;
+height:12px;
+background:#e0e0e0;
+border-radius:6px;
+margin:6px 0;
+overflow:hidden;
+}
+
+.progressFill{
+height:100%;
+background:#1F6F5C;
+}
+
+.locked{
+color:#b00;
+font-size:12px;
+}
+
 #totalSeats{
 background:#f0f0f0;
 font-weight:bold;
@@ -105,10 +124,6 @@ border-radius:12px;
 padding:25px;
 text-align:center;
 background:white;
-}
-
-#ticket h2{
-color:#1F6F5C;
 }
 
 footer{
@@ -131,7 +146,6 @@ color:#888;
 <img src="images/his-logo.png" class="logo">
 
 <h1>Sapporo Masjid</h1>
-
 <p>Eid Al-Fitr Prayer Registration</p>
 
 </div>
@@ -187,7 +201,6 @@ Organized by Hokkaido Islamic Society
 
 const api="https://script.google.com/macros/s/AKfycbzwB8T5s1mhR2rQWXwV3z2EINzzumLOktIDeArhz0ku0TD8AfhywZJqJ3PaXN7pEyaEmA/exec"
 
-
 function updateTotalSeats(){
 
 let boys=parseInt(document.querySelector("[name=boys_count]").value)||0
@@ -195,7 +208,7 @@ let girls=parseInt(document.querySelector("[name=girls_count]").value)||0
 
 let total=1+boys+girls
 
-document.getElementById("totalSeats").value=
+document.getElementById("totalSeats").value =
 `${total} seat(s) (1 adult + ${boys+girls} children)`
 
 }
@@ -204,6 +217,13 @@ document.querySelector("[name=boys_count]").addEventListener("input",updateTotal
 document.querySelector("[name=girls_count]").addEventListener("input",updateTotalSeats)
 
 updateTotalSeats()
+
+
+
+function progress(percent){
+return `<div class="progressBar"><div class="progressFill" style="width:${percent}%"></div></div>`
+}
+
 
 
 function loadSeats(){
@@ -217,40 +237,72 @@ let dropdown=document.querySelector("select[name=batch]")
 
 dropdown.innerHTML=""
 
-for(let b=6;b<=10;b++){
+const batches=[6,7,8,9,10]
+
+let prevOpen=true
+
+batches.forEach((b,i)=>{
 
 let m=data[b].maleLeft
 let f=data[b].femaleLeft
 
+let usedMale=300-m
+let usedFemale=100-f
+
+let percent=Math.round(((usedMale+usedFemale)/400)*100)
+
 let isFull=(m<=0 && f<=0)
 
-html+=`
-<div>
-<b>${b}:00</b>
-Male left: ${m}/300 | Female left: ${f}/100 ${isFull?"<b>FULL</b>":""}
-</div>
-`
+html+=`<div><b>${b}:00 a.m.</b> ${percent}% full`
+html+=progress(percent)
+html+=`Male left: ${m}/300 | Female left: ${f}/100`
+
+if(i>0){
+
+let prev=batches[i-1]
+
+let pm=data[prev].maleLeft
+let pf=data[prev].femaleLeft
+
+let prevMaleUsed=300-pm
+let prevFemaleUsed=100-pf
+
+if(prevMaleUsed<270 && prevFemaleUsed<90){
+
+prevOpen=false
+html+=`<div class="locked">🔒 Locked until ${prev}:00 reaches 90%</div>`
+
+}
+
+}
+
+html+=`</div>`
+
 
 let option=document.createElement("option")
 
 option.value=b
 
 if(isFull){
-option.text=`${b}:00 (FULL)`
+option.text=`${b}:00 a.m. (FULL)`
 option.disabled=true
-}else{
-option.text=`${b}:00 (M:${m} F:${f})`
+}
+else if(!prevOpen){
+option.text=`${b}:00 a.m. (Locked)`
+option.disabled=true
+}
+else{
+option.text=`${b}:00 a.m. (M:${m} F:${f})`
 }
 
 dropdown.appendChild(option)
 
-}
+prevOpen=true
+
+})
 
 document.getElementById("seatStatus").innerHTML=html
 
-})
-.catch(()=>{
-document.getElementById("seatStatus").innerHTML="Unable to load seat availability."
 })
 
 }
@@ -266,11 +318,6 @@ e.preventDefault()
 
 let boys=parseInt(document.querySelector("[name=boys_count]").value)||0
 let girls=parseInt(document.querySelector("[name=girls_count]").value)||0
-
-if(boys<0 || girls<0){
-alert("Children numbers cannot be negative")
-return
-}
 
 document.getElementById("submitBtn").disabled=true
 document.getElementById("submitBtn").innerText="Processing..."
@@ -289,7 +336,7 @@ let seats=1+boys+girls
 
 let qrData=`Sapporo Masjid Eid Prayer
 Name:${name}
-Batch:${data.batch}:00
+Batch:${data.batch}:00 a.m.
 Seats:${seats}
 Ticket:${data.qr}`
 
@@ -317,8 +364,6 @@ src="https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURICo
 
 <button onclick="downloadTicket()">Download Ticket</button>
 
-<button onclick="sendTicketEmail()">Send Ticket to Email (optional)</button>
-
 `
 
 }else{
@@ -327,10 +372,6 @@ alert("Registration full")
 
 }
 
-})
-
-.catch(()=>{
-alert("Registration failed")
 })
 
 })
@@ -345,20 +386,11 @@ scale:3
 }).then(canvas=>{
 
 let link=document.createElement("a")
-
 link.download="eid-ticket.png"
 link.href=canvas.toDataURL("image/png")
-
 link.click()
 
 })
-
-}
-
-
-function sendTicketEmail(){
-
-alert("Please download or screenshot the ticket. Email sending is limited.");
 
 }
 

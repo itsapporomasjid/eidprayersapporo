@@ -62,8 +62,9 @@ margin:auto;
 margin-top:20px;
 font-size:22px;
 font-weight:bold;
-padding:15px;
+padding:18px;
 border-radius:8px;
+line-height:1.6;
 }
 
 .ok{
@@ -120,9 +121,13 @@ Hokkaido Islamic Society
 const api="https://script.google.com/macros/s/AKfycbyN6hUC2fmxk7s7GL9oL6NWpw_Hbnon5sQ8XiBuo1k54DvqSZu16pL3cw1StfyH2X33dA/exec"
 
 let scanner
+let scanningAllowed=true
 
 function onScanSuccess(qrText){
 
+if(!scanningAllowed) return
+
+scanningAllowed=false
 scanner.pause(true)
 
 let ticket=null
@@ -145,19 +150,34 @@ fetch(api+"?qr="+encodeURIComponent(ticket))
 .then(data=>{
 
 if(data.status=="OK"){
-showResult(`✅ VALID<br>${data.name}<br>Batch ${data.batch}:00<br>Seats: ${data.seats}`,"ok")
+
+showResult(`
+✅ VALID ENTRY<br>
+<strong>${data.name}</strong><br>
+Batch ${data.batch}:00<br>
+Total Seats: ${data.seats}
+`,"ok")
+
 }
 
 else if(data.status=="USED"){
+
 showResult("⚠️ Ticket Already Used","used")
+
 }
 
 else{
+
 showResult("❌ Ticket Not Found","error")
+
 }
 
 resumeScanner()
 
+})
+.catch(()=>{
+showResult("❌ Network Error","error")
+resumeScanner()
 })
 
 }
@@ -179,6 +199,8 @@ scanner.resume()
 
 document.getElementById("result").innerHTML="Ready to scan ticket"
 document.getElementById("result").className=""
+
+scanningAllowed=true
 
 },3000)
 

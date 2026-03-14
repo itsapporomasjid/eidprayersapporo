@@ -171,6 +171,9 @@ color:#888;
 <label>Number of Girls</label>
 <input type="number" name="girls_count" min="0" value="0">
 
+<label>Wife (optional)</label>
+<input type="number" name="wife_count" min="0" value="0">
+
 <label>Total Seats Reserved</label>
 <input type="text" id="totalSeats" readonly>
 
@@ -194,28 +197,33 @@ Organized by Hokkaido Islamic Society
 
 <script>
 
-const api="https://script.google.com/macros/s/AKfycbzvnvbqFR8y3joVFyjwqUga_EhNfpNqKABffaZoWw6zQZs7YP8Zo_WWMQAx-bVCBxo6hQ/exec"
+const api="https://script.google.com/macros/s/AKfycbwlA6nLxp12UfoHl6WUJDEID9D-w0PhF_EQZtvojdREpRpSMchsOkJJvdvlfa0gNNW3-Q/exec"
+
 
 function updateTotalSeats(){
 
 let boys=parseInt(document.querySelector("[name=boys_count]").value)||0
 let girls=parseInt(document.querySelector("[name=girls_count]").value)||0
+let wife=parseInt(document.querySelector("[name=wife_count]").value)||0
 
-let total=1+boys+girls
+let total=1+boys+girls+wife
 
 document.getElementById("totalSeats").value =
-`${total} seat(s) (1 adult + ${boys+girls} children)`
+`${total} seat(s) (1 adult + ${boys+girls+wife} family members)`
 
 }
 
 document.querySelector("[name=boys_count]").addEventListener("input",updateTotalSeats)
 document.querySelector("[name=girls_count]").addEventListener("input",updateTotalSeats)
+document.querySelector("[name=wife_count]").addEventListener("input",updateTotalSeats)
 
 updateTotalSeats()
+
 
 function progress(percent){
 return `<div class="progressBar"><div class="progressFill" style="width:${percent}%"></div></div>`
 }
+
 
 function loadSeats(){
 
@@ -226,7 +234,6 @@ fetch(api)
 let html=""
 let dropdown=document.querySelector("select[name=batch]")
 
-/* remember selected batch */
 let selectedBatch = dropdown.value
 
 dropdown.innerHTML=""
@@ -265,7 +272,6 @@ dropdown.appendChild(option)
 
 })
 
-/* restore previous selection */
 if(selectedBatch){
 dropdown.value = selectedBatch
 }
@@ -275,8 +281,11 @@ document.getElementById("seatStatus").innerHTML=html
 })
 
 }
+
 loadSeats()
 setInterval(loadSeats,10000)
+
+
 
 document.getElementById("eidForm").addEventListener("submit",function(e){
 
@@ -284,6 +293,7 @@ e.preventDefault()
 
 let boys=parseInt(document.querySelector("[name=boys_count]").value)||0
 let girls=parseInt(document.querySelector("[name=girls_count]").value)||0
+let wife=parseInt(document.querySelector("[name=wife_count]").value)||0
 
 document.getElementById("submitBtn").disabled=true
 document.getElementById("submitBtn").innerText="Processing..."
@@ -298,7 +308,7 @@ body:new FormData(this)
 if(data.status=="OK"){
 
 let name=document.querySelector('[name=name]').value
-let seats=1+boys+girls
+let seats=1+boys+girls+wife
 
 let qrData=`Sapporo Masjid Eid Prayer
 Name:${name}
@@ -341,6 +351,7 @@ alert("Registration full")
 })
 
 })
+
 
 function downloadTicket(){
 

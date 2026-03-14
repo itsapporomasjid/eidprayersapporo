@@ -226,6 +226,9 @@ fetch(api)
 let html=""
 let dropdown=document.querySelector("select[name=batch]")
 
+/* remember selected batch */
+let selectedBatch = dropdown.value
+
 dropdown.innerHTML=""
 
 const batches=[6,7,8,9,10]
@@ -248,7 +251,6 @@ html+=`Male left: ${m}/300 | Female left: ${f}/100`
 html+=`</div>`
 
 let option=document.createElement("option")
-
 option.value=b
 
 if(isFull){
@@ -263,14 +265,18 @@ dropdown.appendChild(option)
 
 })
 
+/* restore previous selection */
+if(selectedBatch){
+dropdown.value = selectedBatch
+}
+
 document.getElementById("seatStatus").innerHTML=html
 
 })
 
 }
-
 loadSeats()
-setInterval(loadSeats,5000)
+setInterval(loadSeats,10000)
 
 document.getElementById("eidForm").addEventListener("submit",function(e){
 

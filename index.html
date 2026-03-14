@@ -106,11 +106,6 @@ height:100%;
 background:#1F6F5C;
 }
 
-.locked{
-color:#b00;
-font-size:12px;
-}
-
 #totalSeats{
 background:#f0f0f0;
 font-weight:bold;
@@ -199,7 +194,7 @@ Organized by Hokkaido Islamic Society
 
 <script>
 
-const api="https://script.google.com/macros/s/AKfycbzwB8T5s1mhR2rQWXwV3z2EINzzumLOktIDeArhz0ku0TD8AfhywZJqJ3PaXN7pEyaEmA/exec"
+const api="https://script.google.com/macros/s/AKfycbzdCRU2YOqexle2e_VbGe9Jjgyg7d_1R7y6OEpsX0YGD07FoisYJc4pWW3qxUnZQ5mTiw/exec"
 
 function updateTotalSeats(){
 
@@ -218,13 +213,9 @@ document.querySelector("[name=girls_count]").addEventListener("input",updateTota
 
 updateTotalSeats()
 
-
-
 function progress(percent){
 return `<div class="progressBar"><div class="progressFill" style="width:${percent}%"></div></div>`
 }
-
-
 
 function loadSeats(){
 
@@ -239,9 +230,7 @@ dropdown.innerHTML=""
 
 const batches=[6,7,8,9,10]
 
-let prevOpen=true
-
-batches.forEach((b,i)=>{
+batches.forEach((b)=>{
 
 let m=data[b].maleLeft
 let f=data[b].femaleLeft
@@ -256,28 +245,7 @@ let isFull=(m<=0 && f<=0)
 html+=`<div><b>${b}:00 a.m.</b> ${percent}% full`
 html+=progress(percent)
 html+=`Male left: ${m}/300 | Female left: ${f}/100`
-
-if(i>0){
-
-let prev=batches[i-1]
-
-let pm=data[prev].maleLeft
-let pf=data[prev].femaleLeft
-
-let prevMaleUsed=300-pm
-let prevFemaleUsed=100-pf
-
-if(prevMaleUsed<270 && prevFemaleUsed<90){
-
-prevOpen=false
-html+=`<div class="locked">🔒 Locked until ${prev}:00 reaches 90%</div>`
-
-}
-
-}
-
 html+=`</div>`
-
 
 let option=document.createElement("option")
 
@@ -287,17 +255,11 @@ if(isFull){
 option.text=`${b}:00 a.m. (FULL)`
 option.disabled=true
 }
-else if(!prevOpen){
-option.text=`${b}:00 a.m. (Locked)`
-option.disabled=true
-}
 else{
 option.text=`${b}:00 a.m. (M:${m} F:${f})`
 }
 
 dropdown.appendChild(option)
-
-prevOpen=true
 
 })
 
@@ -309,8 +271,6 @@ document.getElementById("seatStatus").innerHTML=html
 
 loadSeats()
 setInterval(loadSeats,5000)
-
-
 
 document.getElementById("eidForm").addEventListener("submit",function(e){
 
@@ -375,8 +335,6 @@ alert("Registration full")
 })
 
 })
-
-
 
 function downloadTicket(){
 

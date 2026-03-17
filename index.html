@@ -164,7 +164,6 @@ let total=1+boys+girls+wife
 
 document.getElementById("totalSeats").value =
 `${total} seat(s) (1 adult + ${boys+girls+wife} family members)`
-
 }
 
 ["boys_count","girls_count","wife_count"].forEach(n=>{
@@ -187,6 +186,8 @@ return `<div class="progressBar"><div class="progressFill" style="width:${percen
 
 function loadSeats(){
 
+document.getElementById("seatStatus").innerHTML="Updating..."
+
 fetch(api)
 .then(res=>res.json())
 .then(data=>{
@@ -201,17 +202,16 @@ const batches=[6,7,8,9,10]
 
 batches.forEach((b)=>{
 
-let m = data[b]?.maleCount || 0
-let f = data[b]?.femaleCount || 0
-let maleLimit = data[b]?.maleLimit || 300
-let femaleLimit = data[b]?.femaleLimit || 100
+let m = data[b]?.maleCount ?? 0
+let f = data[b]?.femaleCount ?? 0
+let maleLimit = data[b]?.maleLimit ?? 300
+let femaleLimit = data[b]?.femaleLimit ?? 100
 
 let percent = Math.round(((m+f)/(maleLimit+femaleLimit))*100)
-percent = Math.min(100, Math.max(0, percent))
+percent = isNaN(percent) ? 0 : Math.min(100, Math.max(0, percent))
 
 let isFull = (m>=maleLimit && f>=femaleLimit)
 
-// ⭐ detect adjusted batches
 let specialNote = ""
 if(b === 9 || b === 10){
   specialNote = " <span style='color:#d9534f;font-weight:600;'>(Adjusted: 200 Male / 200 Female)</span>"
@@ -229,23 +229,20 @@ option.value=b
 if(isFull){
 option.text=`${b}:00 a.m. (FULL)`
 option.disabled=true
-}
-else{
-
-// ⭐ show limit clearly in dropdown
+}else{
 if(b === 9 || b === 10){
 option.text=`${b}:00 a.m. (200M / 200F)`
 }else{
 option.text=`${b}:00 a.m. (300M / 100F)`
 }
-
 }
 
 dropdown.appendChild(option)
 
 })
 
-if(selectedBatch){
+// preserve selection safely
+if(selectedBatch && dropdown.querySelector(`option[value="${selectedBatch}"]`)){
 dropdown.value = selectedBatch
 }
 
@@ -262,8 +259,8 @@ document.getElementById("seatStatus").innerHTML="Error loading data"
 /* AUTO REFRESH */
 /* ============================= */
 
-loadSeats()                 // first load
-setInterval(loadSeats,5000) // refresh every 5 seconds
+loadSeats()
+setInterval(loadSeats,5000)
 
 /* ============================= */
 /* FORM SUBMIT */
@@ -273,7 +270,11 @@ document.getElementById("eidForm").addEventListener("submit",function(e){
 
 e.preventDefault()
 
-// EXTRA FRONTEND VALIDATION
+let btn=document.getElementById("submitBtn")
+
+// prevent double click
+if(btn.disabled) return
+
 let gender = document.querySelector("[name=gender]").value
 if(gender !== "Male" && gender !== "Female"){
 alert("Invalid gender selection")
@@ -284,8 +285,8 @@ let boys=parseInt(document.querySelector("[name=boys_count]").value)||0
 let girls=parseInt(document.querySelector("[name=girls_count]").value)||0
 let wife=parseInt(document.querySelector("[name=wife_count]").value)||0
 
-document.getElementById("submitBtn").disabled=true
-document.getElementById("submitBtn").innerText="Processing..."
+btn.disabled=true
+btn.innerText="Processing..."
 
 fetch(api,{
 method:"POST",
@@ -326,10 +327,15 @@ src="https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURICo
 
 }else{
 alert("Registration full or invalid data")
-document.getElementById("submitBtn").disabled=false
-document.getElementById("submitBtn").innerText="Register"
+btn.disabled=false
+btn.innerText="Register"
 }
 
+})
+.catch(()=>{
+alert("Network error. Please try again.")
+btn.disabled=false
+btn.innerText="Register"
 })
 
 })

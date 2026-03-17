@@ -186,8 +186,6 @@ return `<div class="progressBar"><div class="progressFill" style="width:${percen
 
 function loadSeats(){
 
-document.getElementById("seatStatus").innerHTML="Updating..."
-
 fetch(api)
 .then(res=>res.json())
 .then(data=>{
@@ -219,7 +217,9 @@ if(b === 9 || b === 10){
 
 html+=`<div style="margin-bottom:12px;">
 <b>${b}:00 a.m.</b> ${percent}% full ${specialNote}
-${progress(percent)}
+<div class="progressBar">
+  <div class="progressFill" style="width:${percent}%"></div>
+</div>
 Male: ${m}/${maleLimit} | Female: ${f}/${femaleLimit}
 </div>`
 
@@ -246,15 +246,17 @@ if(selectedBatch && dropdown.querySelector(`option[value="${selectedBatch}"]`)){
 dropdown.value = selectedBatch
 }
 
+// ✅ update ONLY after data ready (no flicker)
 document.getElementById("seatStatus").innerHTML=html
 
 })
 .catch(()=>{
-document.getElementById("seatStatus").innerHTML="Error loading data"
+// ❌ don't overwrite UI if error → keep last good data
+console.error("Seat load error")
 })
 
 }
-
+  
 /* ============================= */
 /* AUTO REFRESH */
 /* ============================= */

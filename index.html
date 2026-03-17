@@ -11,7 +11,6 @@
 <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
 
 <style>
-
 body{
 font-family:Arial, Helvetica, sans-serif;
 background:#F7F9F8;
@@ -29,33 +28,13 @@ border-radius:12px;
 box-shadow:0 6px 20px rgba(0,0,0,0.08);
 }
 
-.header{
-text-align:center;
-margin-bottom:25px;
-}
+.header{text-align:center;margin-bottom:25px;}
+.logo{width:120px;margin-bottom:10px;}
 
-.logo{
-width:120px;
-margin-bottom:10px;
-}
+.header h1{margin:0;font-size:28px;color:#1F6F5C;}
+.header p{margin:5px 0 0 0;font-size:14px;color:#666;}
 
-.header h1{
-margin:0;
-font-size:28px;
-color:#1F6F5C;
-}
-
-.header p{
-margin:5px 0 0 0;
-font-size:14px;
-color:#666;
-}
-
-label{
-display:block;
-margin-top:14px;
-font-weight:600;
-}
+label{display:block;margin-top:14px;font-weight:600;}
 
 input,select{
 width:100%;
@@ -80,9 +59,7 @@ font-weight:600;
 cursor:pointer;
 }
 
-button:hover{
-background:#175a4a;
-}
+button:hover{background:#175a4a;}
 
 #seatStatus{
 background:#f2f6f5;
@@ -93,41 +70,20 @@ font-size:14px;
 }
 
 .progressBar{
-width:100%;
-height:12px;
-background:#e0e0e0;
-border-radius:6px;
-margin:6px 0;
-overflow:hidden;
+width:100%;height:12px;background:#e0e0e0;
+border-radius:6px;margin:6px 0;overflow:hidden;
 }
 
-.progressFill{
-height:100%;
-background:#1F6F5C;
-}
+.progressFill{height:100%;background:#1F6F5C;}
 
-#totalSeats{
-background:#f0f0f0;
-font-weight:bold;
-}
+#totalSeats{background:#f0f0f0;font-weight:bold;}
 
 #ticket{
-max-width:420px;
-margin:auto;
-border:2px dashed #1F6F5C;
-border-radius:12px;
-padding:25px;
-text-align:center;
-background:white;
+max-width:420px;margin:auto;border:2px dashed #1F6F5C;
+border-radius:12px;padding:25px;text-align:center;background:white;
 }
 
-footer{
-margin-top:30px;
-text-align:center;
-font-size:12px;
-color:#888;
-}
-
+footer{margin-top:30px;text-align:center;font-size:12px;color:#888;}
 </style>
 
 </head>
@@ -137,12 +93,9 @@ color:#888;
 <div class="container">
 
 <div class="header">
-
 <img src="images/his-logo.png" class="logo">
-
 <h1>Sapporo Masjid</h1>
 <p>Eid Al-Fitr Prayer Registration</p>
-
 </div>
 
 <h3>Seat Availability</h3>
@@ -154,9 +107,9 @@ color:#888;
 <input name="name" required>
 
 <label>Gender</label>
-<select name="gender">
-<option>Male</option>
-<option>Female</option>
+<select name="gender" required>
+<option value="Male">Male</option>
+<option value="Female">Female</option>
 </select>
 
 <label>Email</label>
@@ -178,7 +131,7 @@ color:#888;
 <input type="text" id="totalSeats" readonly>
 
 <label>Preferred Batch</label>
-<select name="batch"></select>
+<select name="batch" required></select>
 
 <label>
 <input type="checkbox" required>
@@ -189,16 +142,17 @@ I will attend according to the schedule stated in the ticket
 
 </form>
 
-<footer>
-Organized by Hokkaido Islamic Society
-</footer>
+<footer>Organized by Hokkaido Islamic Society</footer>
 
 </div>
 
 <script>
 
-const api="https://script.google.com/macros/s/AKfycbxq7H5jr9E_AylOiTOYNiDo1VmRGCTw9GA14LKO-I-wGvbnQdCp2bpuJZmPT3Hoju1ngw/exec"
+const api="https://script.google.com/macros/s/AKfycbxyQxg3bSQcDM1wbtFVdsmCo1elc9oMrnkgaQCaEAC_hlW__VdVlw7MrbFbbp_6c4VE_A/exec"
 
+/* ============================= */
+/* TOTAL SEAT CALCULATION */
+/* ============================= */
 
 function updateTotalSeats(){
 
@@ -213,17 +167,23 @@ document.getElementById("totalSeats").value =
 
 }
 
-document.querySelector("[name=boys_count]").addEventListener("input",updateTotalSeats)
-document.querySelector("[name=girls_count]").addEventListener("input",updateTotalSeats)
-document.querySelector("[name=wife_count]").addEventListener("input",updateTotalSeats)
+["boys_count","girls_count","wife_count"].forEach(n=>{
+document.querySelector(`[name=${n}]`).addEventListener("input",updateTotalSeats)
+})
 
 updateTotalSeats()
 
+/* ============================= */
+/* PROGRESS BAR */
+/* ============================= */
 
 function progress(percent){
 return `<div class="progressBar"><div class="progressFill" style="width:${percent}%"></div></div>`
 }
 
+/* ============================= */
+/* LOAD SEATS */
+/* ============================= */
 
 function loadSeats(){
 
@@ -233,7 +193,6 @@ fetch(api)
 
 let html=""
 let dropdown=document.querySelector("select[name=batch]")
-
 let selectedBatch = dropdown.value
 
 dropdown.innerHTML=""
@@ -242,31 +201,31 @@ const batches=[6,7,8,9,10]
 
 batches.forEach((b)=>{
 
-let m=data[b].maleLeft
-let f=data[b].femaleLeft
+// SAFE ACCESS
+let m = data[b]?.maleCount || 0
+let f = data[b]?.femaleCount || 0
+let maleLimit = data[b]?.maleLimit || 300
+let femaleLimit = data[b]?.femaleLimit || 100
 
-let usedMale=300-m
-let usedFemale=100-f
+let percent = Math.round(((m+f)/(maleLimit+femaleLimit))*100)
+percent = Math.min(100, Math.max(0, percent))
 
-let percent=Math.round(((usedMale+usedFemale)/400)*100)
+let isFull = (m>=maleLimit && f>=femaleLimit)
 
-let isFull=(m<=0 && f<=0)
-
-html+=`<div><b>${b}:00 a.m.</b> ${percent}% full`
-html+=progress(percent)
-html+=`Male: ${m}/300 | Female: ${f}/100`
-html+=`</div>`
+html+=`<div style="margin-bottom:10px;">
+<b>${b}:00 a.m.</b> ${percent}% full
+${progress(percent)}
+Male: ${m}/${maleLimit} | Female: ${f}/${femaleLimit}
+</div>`
 
 let option=document.createElement("option")
 option.value=b
 
-if(isFull){
-option.text=`${b}:00 a.m. (FULL)`
-option.disabled=true
-}
-else{
-option.text=`${b}:00 a.m. (M:${m} F:${f})`
-}
+option.text = isFull
+? `${b}:00 a.m. (FULL)`
+: `${b}:00 a.m. (M:${m} F:${f})`
+
+option.disabled = isFull
 
 dropdown.appendChild(option)
 
@@ -279,17 +238,29 @@ dropdown.value = selectedBatch
 document.getElementById("seatStatus").innerHTML=html
 
 })
+.catch(()=>{
+document.getElementById("seatStatus").innerHTML="Error loading data"
+})
 
 }
 
 loadSeats()
-setInterval(loadSeats,10000)
+setInterval(loadSeats,5000)
 
-
+/* ============================= */
+/* FORM SUBMIT */
+/* ============================= */
 
 document.getElementById("eidForm").addEventListener("submit",function(e){
 
 e.preventDefault()
+
+// EXTRA FRONTEND VALIDATION
+let gender = document.querySelector("[name=gender]").value
+if(gender !== "Male" && gender !== "Female"){
+alert("Invalid gender selection")
+return
+}
 
 let boys=parseInt(document.querySelector("[name=boys_count]").value)||0
 let girls=parseInt(document.querySelector("[name=girls_count]").value)||0
@@ -319,39 +290,35 @@ Ticket:${data.qr}`
 document.body.innerHTML=`
 
 <div id="ticket">
-
 <h2>Sapporo Masjid</h2>
 <h3>Eid Al-Fitr Prayer</h3>
-
 <hr>
-
 <h2>Batch ${data.batch}:00 a.m.</h2>
-
 <p><strong>${name}</strong></p>
-
 <p>Seats Reserved: ${seats}</p>
 
 <img crossorigin="anonymous"
 src="https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(qrData)}">
 
 <p>Please show this ticket at the entrance.</p>
-
 </div>
 
 <button onclick="downloadTicket()">Download Ticket</button>
-
 `
 
 }else{
-
-alert("Registration full")
-
+alert("Registration full or invalid data")
+document.getElementById("submitBtn").disabled=false
+document.getElementById("submitBtn").innerText="Register"
 }
 
 })
 
 })
 
+/* ============================= */
+/* DOWNLOAD TICKET */
+/* ============================= */
 
 function downloadTicket(){
 
@@ -359,12 +326,10 @@ html2canvas(document.querySelector("#ticket"),{
 useCORS:true,
 scale:3
 }).then(canvas=>{
-
 let link=document.createElement("a")
 link.download="eid-ticket.png"
 link.href=canvas.toDataURL("image/png")
 link.click()
-
 })
 
 }

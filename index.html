@@ -148,7 +148,7 @@ I will attend according to the schedule stated in the ticket
 
 <script>
 
-const api="https://script.google.com/macros/s/AKfycbwVNbpZ8J10Hp3Qz2i46nT5__oK3BTzHTxXD6pwdXt0YIAy-89FiDCoHPF80xD8_-4xGQ/exec"
+const api="https://script.google.com/macros/s/AKfycbxnjMv6IrRRddLxTuZvj-uyez8FrtR89wA6t0rTKLBAop2vmsDddGoIyTuO3AqnK1y1VA/exec"
 
 /* ============================= */
 /* TOTAL SEAT CALCULATION */
@@ -211,7 +211,7 @@ percent = isNaN(percent) ? 0 : Math.min(100, Math.max(0, percent))
 let isFull = (m>=maleLimit && f>=femaleLimit)
 
 let specialNote = ""
-if(b === 9 || b === 10){
+if(b === 8 || b === 9 || b === 10){
   specialNote = " <span style='color:#1F6F5C;font-weight:600;'>(Adjusted capacity: 200 Male and 200 Female)</span>"
 }
 
@@ -230,7 +230,7 @@ if(isFull){
 option.text=`${b}:00 a.m. (FULL)`
 option.disabled=true
 }else{
-if(b === 9 || b === 10){
+if(b === 8 || b === 9 || b === 10){
 option.text=`${b}:00 a.m. (200M / 200F)`
 }else{
 option.text=`${b}:00 a.m. (300M / 100F)`
@@ -327,10 +327,20 @@ src="https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURICo
 <button onclick="downloadTicket()">Download Ticket</button>
 `
 
+}else if(data.status=="FULL_MALE"){
+  alert("Male seats are full")
+  btn.disabled=false
+  btn.innerText="Register"
+
+}else if(data.status=="FULL_FEMALE"){
+  alert("Female seats are full")
+  btn.disabled=false
+  btn.innerText="Register"
+
 }else{
-alert("Registration full or invalid data")
-btn.disabled=false
-btn.innerText="Register"
+  alert("Registration unavailable. Please try another batch.")
+  btn.disabled=false
+  btn.innerText="Register"
 }
 
 })

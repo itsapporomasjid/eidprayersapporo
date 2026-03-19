@@ -118,10 +118,25 @@ Hokkaido Islamic Society
 
 <script>
 
-const api="https://script.google.com/macros/s/AKfycbwikmuibiiPNdE5KFfvSZB5gKkcCx2LErzdi4rLNA5CeWgk8zSWWdEJDeM80NOT-rtmJw/exec"
+const api="https://script.google.com/macros/s/AKfycbznc0JS2dqodwStwfa2-GjKknl7_H-3Vgj7nji8ISG5c7kgd5fDj0YuuCRye9MzZ7IpTA/exec"
 
 let scanner
 let scanningAllowed=true
+
+/* ============================= */
+/* FORMAT BATCH TIME */
+/* ============================= */
+
+function formatBatch(batch){
+batch = Number(batch)
+if(!batch) return batch
+
+return batch + ":00 a.m."
+}
+
+/* ============================= */
+/* QR SCAN SUCCESS */
+/* ============================= */
 
 function onScanSuccess(qrText){
 
@@ -130,14 +145,9 @@ if(!scanningAllowed) return
 scanningAllowed=false
 scanner.pause(true)
 
-let ticket=null
-let lines=qrText.split("\n")
-
-for(let i=0;i<lines.length;i++){
-if(lines[i].startsWith("Ticket:")){
-ticket=lines[i].replace("Ticket:","").trim()
-}
-}
+// ✅ safer extraction
+let match = qrText.match(/Ticket:(.*)/)
+let ticket = match ? match[1].trim() : null
 
 if(!ticket){
 showResult("❌ Invalid QR Code","error")
@@ -154,7 +164,7 @@ if(data.status=="OK"){
 showResult(`
 ✅ VALID ENTRY<br>
 <strong>${data.name}</strong><br>
-Batch ${data.batch}:00 a.m.<br>
+Batch ${formatBatch(data.batch)}<br>
 Total Seats: ${data.seats}
 `,"ok")
 
@@ -182,6 +192,10 @@ resumeScanner()
 
 }
 
+/* ============================= */
+/* SHOW RESULT */
+/* ============================= */
+
 function showResult(message,type){
 
 let box=document.getElementById("result")
@@ -191,11 +205,19 @@ box.className=type
 
 }
 
+/* ============================= */
+/* RESUME SCANNER */
+/* ============================= */
+
 function resumeScanner(){
 
 setTimeout(()=>{
 
+try{
 scanner.resume()
+}catch(e){
+console.error("Scanner resume error", e)
+}
 
 document.getElementById("result").innerHTML="Ready to scan ticket"
 document.getElementById("result").className=""
@@ -205,6 +227,10 @@ scanningAllowed=true
 },3000)
 
 }
+
+/* ============================= */
+/* INIT */
+/* ============================= */
 
 window.onload=function(){
 

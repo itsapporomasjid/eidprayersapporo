@@ -148,7 +148,7 @@ I will attend according to the schedule stated in the ticket
 
 <script>
 
-const api="https://script.google.com/macros/s/AKfycbxnjMv6IrRRddLxTuZvj-uyez8FrtR89wA6t0rTKLBAop2vmsDddGoIyTuO3AqnK1y1VA/exec"
+const api="https://script.google.com/macros/s/AKfycbznc0JS2dqodwStwfa2-GjKknl7_H-3Vgj7nji8ISG5c7kgd5fDj0YuuCRye9MzZ7IpTA/exec"
 
 /* ============================= */
 /* TOTAL SEAT CALCULATION */
@@ -196,7 +196,8 @@ let selectedBatch = dropdown.value
 
 dropdown.innerHTML=""
 
-const batches=[6,7,8,9,10]
+// ✅ ADDED 11 HERE
+const batches=[6,7,8,9,10,11]
 
 batches.forEach((b)=>{
 
@@ -211,7 +212,8 @@ percent = isNaN(percent) ? 0 : Math.min(100, Math.max(0, percent))
 let isFull = (m>=maleLimit && f>=femaleLimit)
 
 let specialNote = ""
-if(b === 8 || b === 9 || b === 10){
+// ✅ INCLUDE 11
+if(b === 8 || b === 9 || b === 10 || b === 11){
   specialNote = " <span style='color:#1F6F5C;font-weight:600;'>(Adjusted capacity: 200 Male and 200 Female)</span>"
 }
 
@@ -230,7 +232,7 @@ if(isFull){
 option.text=`${b}:00 a.m. (FULL)`
 option.disabled=true
 }else{
-if(b === 8 || b === 9 || b === 10){
+if(b === 8 || b === 9 || b === 10 || b === 11){
 option.text=`${b}:00 a.m. (200M / 200F)`
 }else{
 option.text=`${b}:00 a.m. (300M / 100F)`
@@ -246,12 +248,10 @@ if(selectedBatch && dropdown.querySelector(`option[value="${selectedBatch}"]`)){
 dropdown.value = selectedBatch
 }
 
-// ✅ update ONLY after data ready (no flicker)
 document.getElementById("seatStatus").innerHTML=html
 
 })
 .catch(()=>{
-// ❌ don't overwrite UI if error → keep last good data
 console.error("Seat load error")
 })
 

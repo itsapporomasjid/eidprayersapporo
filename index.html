@@ -213,8 +213,12 @@ let isFull = (m>=maleLimit && f>=femaleLimit)
 
 let specialNote = ""
 // ✅ INCLUDE 11
-if(b === 8 || b === 9 || b === 10 || b === 11){
+if(b === 8 || b === 9 || b === 10){
   specialNote = " <span style='color:#1F6F5C;font-weight:600;'>(Adjusted capacity: 200 Male and 200 Female)</span>"
+}
+
+if(b === 11){
+  specialNote = " <span style='color:#1F6F5C;font-weight:600;'>(Additional batch)</span>"
 }
 
 html+=`<div style="margin-bottom:12px;">

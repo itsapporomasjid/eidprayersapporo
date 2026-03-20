@@ -148,7 +148,7 @@ I will attend according to the schedule stated in the ticket
 
 <script>
 
-const api="https://script.google.com/macros/s/AKfycbznc0JS2dqodwStwfa2-GjKknl7_H-3Vgj7nji8ISG5c7kgd5fDj0YuuCRye9MzZ7IpTA/exec"
+const api="https://script.google.com/macros/s/AKfycbxKxqTAlEdFlSAXg9_3-10M1jOfD0k4mS3jK5s3_iHl1swa36VJ5f2zNeN1sNQh4OHcEA/exec"
 
 /* ============================= */
 /* TOTAL SEAT CALCULATION */
@@ -218,7 +218,7 @@ if(b === 8 || b === 9 || b === 10){
 }
 
 if(b === 11){
-  specialNote = " <span style='color:#1F6F5C;font-weight:600;'>(Additional batch)</span>"
+  specialNote = " <span style='color:#1F6F5C;font-weight:600;'>(Adjusted capacity: 250 Male and 150 Female)</span>"
 }
 
 html+=`<div style="margin-bottom:12px;">
@@ -236,10 +236,14 @@ if(isFull){
 option.text=`${b}:00 a.m. (FULL)`
 option.disabled=true
 }else{
-if(b === 8 || b === 9 || b === 10 || b === 11){
-option.text=`${b}:00 a.m. (200M / 200F)`
-}else{
-option.text=`${b}:00 a.m. (300M / 100F)`
+if(b === 8 || b === 9 || b === 10){
+  option.text=`${b}:00 a.m. (200M / 200F)`
+}
+else if(b === 11){
+  option.text=`${b}:00 a.m. (250M / 150F)`
+}
+else{
+  option.text=`${b}:00 a.m. (300M / 100F)`
 }
 }
 

@@ -2,7 +2,7 @@
 <html>
 <head>
 
-<title>Sapporo Masjid Eid Al-Adha 2026 Prayer Registration</title>
+<title>Sapporo Masjid Eid Al-Fitr Prayer Registration</title>
 
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
@@ -95,7 +95,7 @@ footer{margin-top:30px;text-align:center;font-size:12px;color:#888;}
 <div class="header">
 <img src="images/his-logo.png" class="logo">
 <h1>Sapporo Masjid</h1>
-<p>Eid Al-Adha 2026 Prayer Registration</p>
+<p>Eid Al-Fitr Prayer Registration</p>
 </div>
 
 <h3>Seat Availability</h3>
@@ -148,7 +148,7 @@ I will attend according to the schedule stated in the ticket
 
 <script>
 
-const api="https://script.google.com/macros/s/AKfycbxGhEEb3p1Dv9jfMJPTuqwnHdpSL3_KVTOoCttfdfekC6S1N8el5FgytbzHKw2e-I4d/exec"
+const api="https://script.google.com/macros/s/AKfycbxXAbH9GegrAohWHfIjPllFYQQiFwRrTwHf2kfAyXjqCR74dJ38_tI3sl4idURKV4PC/exec"
 
 /* ============================= */
 /* TOTAL SEAT CALCULATION */
@@ -201,16 +201,15 @@ const batches=[7,8,9]
 
 batches.forEach((b)=>{
 
-let m = Number(data[b]?.maleCount || 0)
-let f = Number(data[b]?.femaleCount || 0)
-
-let maleLimit = Number(data[b]?.maleLimit || 300)
-let femaleLimit = Number(data[b]?.femaleLimit || 100)
+let m = data[b]?.maleCount ?? 0
+let f = data[b]?.femaleCount ?? 0
+let maleLimit = data[b]?.maleLimit ?? 300
+let femaleLimit = data[b]?.femaleLimit ?? 100
 
 let percent = Math.round(((m+f)/(maleLimit+femaleLimit))*100)
 percent = isNaN(percent) ? 0 : Math.min(100, Math.max(0, percent))
 
-let isFull = (m >= maleLimit) || (f >= femaleLimit)
+let isFull = (m>=maleLimit && f>=femaleLimit)
 
 let specialNote = ""
 
@@ -218,41 +217,33 @@ if(b === 8 || b === 9){
   specialNote = " <span style='color:#1F6F5C;font-weight:600;'>(Adjusted capacity: 200 Male and 200 Female)</span>"
 }
 
-html += `
-<div style="margin-bottom:12px;">
+html+=`<div style="margin-bottom:12px;">
 <b>${b}:00 a.m.</b> ${percent}% full ${specialNote}
 <div class="progressBar">
-<div class="progressFill" style="width:${percent}%"></div>
+  <div class="progressFill" style="width:${percent}%"></div>
 </div>
 Male: ${m}/${maleLimit} | Female: ${f}/${femaleLimit}
-</div>
-`
+</div>`
 
 let option=document.createElement("option")
 option.value=b
 
 if(isFull){
-
-  option.text=`${b}:00 a.m. (FULL)`
-  option.disabled=true
-
+option.text=`${b}:00 a.m. (FULL)`
+option.disabled=true
 }else{
-
-  option.disabled=false
-
-  if(b === 8 || b === 9){
-    option.text=`${b}:00 a.m. (200M / 200F)`
-  }else{
-    option.text=`${b}:00 a.m. (300M / 100F)`
-  }
-
+if(b === 8 || b === 9){
+  option.text=`${b}:00 a.m. (200M / 200F)`
+}
+else{
+  option.text=`${b}:00 a.m. (300M / 100F)`
+}
 }
 
 dropdown.appendChild(option)
 
 })
 
-  
 // preserve selection safely
 if(selectedBatch && dropdown.querySelector(`option[value="${selectedBatch}"]`)){
 dropdown.value = selectedBatch
